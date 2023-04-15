@@ -3,35 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>profession</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/css/style.css">
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     </head>
     <body>
+
         <h1>Миссия Колонизация Марса</h1>
         <h4>И на Марсе будут яблони цвести!</h4>
-        <h2>Work logs</h2>
-        {% for item in list %}
-            <h2>Action #{{ item[0] }}</h2>
-        <table class="table table-dark">
-          <thead>
-            <tr>
-                <th scope="col">Title of activity</th>
-                <th scope="col">Team leader</th>
-                <th scope="col">Duration</th>
-                <th scope="col">List of collaborators</th>
-                <th scope="col">is finished</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>{{ item[1] }}</td>
-                <td>{{ item[2] }}</td>
-                <td>{{ item[3] }}</td>
-                <td>{{ item[4] }}</td>
-            </tr>
-          </tbody>
-        </table>
-        {% endfor %}
+        <h2>Register form</h2>
+        <main role="main" class="container">
+            {% block content %}{% endblock %}
+        </main>
     </body>
 </html>
