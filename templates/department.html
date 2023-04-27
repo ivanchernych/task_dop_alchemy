@@ -12,30 +12,21 @@
         <nav>
             {% if current_user.is_authenticated %}
                 <p>
-                    <a class="btn btn-info" href="/logout">{{ current_user.name }}</a>
-                    <a class="btn btn-danger" href="/addjob">AddJob</a>
-                </p>
-            {% else %}
-                <p>
-                    <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
-                    <a class="btn btn-success" href="/login">Войти</a>
+                    <a class="btn btn-danger" href="/adddepartament">Add departament</a>
                 </p>
             {% endif %}
         </nav>
-
-        <a class="btn btn-success" href="/department">Departament →</a>
-
-        <h2>Work logs</h2>
+        <a class="btn btn-success" href="/">← Job</a>
+        <h2>list of Departments</h2>
         {% for item in list %}
             <h2>Action #{{ item[0] }}</h2>
             <table class="table table-dark">
               <thead>
                 <tr>
-                    <th scope="col">Title of activity</th>
-                    <th scope="col">Team leader</th>
-                    <th scope="col">Duration</th>
-                    <th scope="col">List of collaborators</th>
-                    <th scope="col">is finished</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Chief</th>
+                    <th scope="col">Members</th>
+                    <th scope="col">Email</th>
                 </tr>
               </thead>
               <tbody>
@@ -44,16 +35,15 @@
                     <td>{{ item[2] }}</td>
                     <td>{{ item[3] }}</td>
                     <td>{{ item[4] }}</td>
-                    <td>{{ item[5] }}</td>
                 </tr>
               </tbody>
             </table>
-        {% if current_user.is_authenticated and (current_user.id == item[6] or current_user.id == 1) %}
+        {% if current_user.is_authenticated and (current_user.id == item[5] or current_user.id == 1) %}
             <div>
-                <a href="/edit_job/{{ item[0] }}" class="btn btn-warning">
+                <a href="/edit_department/{{ item[0] }}" class="btn btn-warning">
                     Изменить
                 </a>
-                <a href="/job_delete/{{ item[0] }}" class="btn btn-danger">
+                <a href="/department_delete/{{ item[0] }}" class="btn btn-danger">
                     Удалить
                 </a>
             </div>

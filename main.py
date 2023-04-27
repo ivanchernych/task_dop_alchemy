@@ -4,10 +4,12 @@ from flask import Flask, render_template, redirect, request, abort
 from data import db_session
 from users import User
 from jobs import Jobs
+from department import Department
 from forms.user import RegisterForm
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms.login_form import LoginForm
 from forms.job_form import Addjob
+from forms.add_department import AddDepartment
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -15,7 +17,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-def create_spisok():
+def create_spisok_jobs():
     db_session.global_init("db/mars_explorer.db")
     db_sess = db_session.create_session()
 
@@ -29,10 +31,22 @@ def create_spisok():
     return jobs
 
 
+def create_spisok_department():
+    db_session.global_init("db/mars_explorer.db")
+    db_sess = db_session.create_session()
+
+    departments = []
+
+    for dep in db_sess.query(Department).all():
+        departments.append([dep.id, dep.title, dep.chief, dep.members, dep.email, dep.creates_user_id])
+
+    return departments
+
+
 @app.route('/')
 def index():
     db_session.global_init("db/mars_explorer.db")
-    jb = create_spisok()
+    jb = create_spisok_jobs()
     return render_template('base.html', list=jb)
 
 
@@ -40,7 +54,7 @@ def index():
 @login_required
 def logout():
     logout_user()
-    return redirect("/")
+    return redirect("/department")
 
 
 @login_manager.user_loader
@@ -163,6 +177,82 @@ def job_delete(id):
     else:
         abort(404)
     return redirect('/')
+
+
+@app.route('/department', methods=['GET', 'POST'])
+@login_required
+def department():
+    db_session.global_init("db/mars_explorer.db")
+    lst_dep = create_spisok_department()
+    return render_template('department.html', list=lst_dep)
+
+
+@app.route('/adddepartament', methods=['GET', 'POST'])
+def adddepartment():
+    print('+')
+    form = AddDepartment()
+    if form.validate_on_submit():
+        db_session.global_init("db/mars_explorer.db")
+        db_sess = db_session.create_session()
+        dep = Department(
+            title=form.title.data,
+            chief=form.chief.data,
+            members=form.members.data,
+            email=form.email.data,
+            creates_user_id=current_user.id
+        )
+        db_sess.add(dep)
+        db_sess.commit()
+        return redirect('/department')
+    return render_template('adddepartment.html', title='adddepartment', form=form)
+
+
+@app.route('/edit_department/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_dep(id):
+    form = AddDepartment()
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        dep = db_sess.query(Department).filter(Department.id == id, ((Department.creates_user_id == current_user.id) |
+                                                                     (current_user.id == 1))).first()
+        if dep:
+            form.title.data = dep.title
+            form.chief.data = dep.chief
+            form.members.data = dep.members
+            form.email.data = dep.email
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        dep = db_sess.query(Department).filter(Department.id == id, ((Department.creates_user_id == current_user.id) |
+                                                                     (current_user.id == 1))).first()
+        if dep:
+            dep.title = form.title.data
+            dep.chief = form.chief.data
+            dep.members = form.members.data
+            dep.email = form.email.data
+            db_sess.commit()
+            return redirect('/department')
+        else:
+            abort(404)
+    return render_template('adddepartment.html',
+                           title='Редактирование departmenta',
+                           form=form
+                           )
+
+
+@app.route('/department_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def dep_delete(id):
+    db_sess = db_session.create_session()
+    dep = db_sess.query(Department).filter(Department.id == id, ((Department.creates_user_id == current_user.id) |
+                                                                 (current_user.id == 1))).first()
+    if dep:
+        db_sess.delete(dep)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/department')
 
 
 if __name__ == '__main__':

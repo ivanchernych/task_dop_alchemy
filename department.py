@@ -11,3 +11,4 @@ class Department(SqlAlchemyBase):
     chief = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'), autoincrement=True)
     members = sqlalchemy.Column(sqlalchemy.String)
     email = sqlalchemy.Column(sqlalchemy.String)
+    creates_user_id = sqlalchemy.Column(sqlalchemy.Integer)
