@@ -45,6 +45,16 @@
                 </tr>
               </tbody>
             </table>
+        {% if current_user.is_authenticated and (current_user.id == item[6] or current_user.id == 1) %}
+            <div>
+                <a href="/edit_job/{{ item[0] }}" class="btn btn-warning">
+                    Изменить
+                </a>
+                <a href="/job_delete/{{ item[0] }}" class="btn btn-danger">
+                    Удалить
+                </a>
+            </div>
+        {% endif %}
         {% endfor %}
         <main role="main" class="container">
             {% block content %}{% endblock %}
